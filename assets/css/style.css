@@ -1,28 +1,60 @@
-/* Import the Hacker theme CSS if available (optional, for local builds) */
-/* @import url('https://unpkg.com/@jekyll-themes/hacker@latest/assets/css/style.css'); */
-
-/* Custom overrides */
-.btn {
-  display: none !important;
-}
-
-/* Hide site title and description if needed */
-.site-title {
-  display: none !important;
-}
-.site-description {
-  display: none !important;
-}
-
+/* Responsive images */
 img {
-  border: none;
-  max-width: 600px;
-  width: 100%;
+  max-width: 100%;
   height: auto;
   display: block;
   margin: 1em auto;
+  border: none;
 }
-/* Optional: further customizations for dark mode, fonts, etc. */
+
+/* Magnifier lens style */
+.img-magnifier-glass {
+  position: absolute;
+  border: 2px solid #caff70;
+  border-radius: 50%;
+  pointer-events: none;
+  width: 80px;
+  height: 80px;
+  box-shadow: 0 0 8px #000;
+  z-index: 10000;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  display: none;
+}
+
+/* Lightbox popup overlay */
+.img-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.img-popup-overlay img {
+  max-width: 90vw;
+  max-height: 90vh;
+  box-shadow: 0 0 20px #000;
+  border-radius: 8px;
+  cursor: zoom-out;
+}
+.img-popup-overlay.active {
+  display: flex;
+}
+
+/* Hide site title and description */
+.site-title, .site-description {
+  display: none !important;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: #caff70;
+  font-weight: bold;
+}
+
+/* Body styling */
 body {
   background: #111;
   color: #caff70;
@@ -35,18 +67,17 @@ a {
   text-decoration: underline;
 }
 
-/* Headings */
-h1, h2, h3, h4, h5, h6 {
-  color: #caff70;
-  font-weight: bold;
-}
-
-/* Code blocks */
+/* Code blocks and ASCII diagrams */
 pre, code {
   background: #222;
   color: #caff70;
   border-radius: 4px;
   padding: 2px 6px;
+  overflow-x: auto;
+  word-break: break-all;
+  white-space: pre;
+  font-size: 0.95em;
+  max-width: 100vw;
 }
 
 /* Remove border from images */
@@ -54,10 +85,36 @@ img {
   border: none;
 }
 
-/* Optional: Remove horizontal rule styling */
+/* Horizontal rule styling */
 hr {
   border: none;
   height: 1px;
   background: #333;
   margin: 2em 0;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  body {
+    font-size: 1em;
+    padding: 0 8px;
+  }
+  h1, h2, h3 {
+    font-size: 1.2em;
+    word-break: break-word;
+  }
+  .post-content {
+    padding: 0 2px;
+  }
+  pre, code {
+    font-size: 0.85em;
+  }
+  .img-popup-overlay img {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+  .img-magnifier-glass {
+    width: 60px;
+    height: 60px;
+  }
 }
