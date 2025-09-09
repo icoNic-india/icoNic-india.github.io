@@ -7,7 +7,9 @@
 }
 
 /* Hide site title and description if needed */
-.site-title,
+.site-title {
+  display: none !important;
+}
 .site-description {
   display: none !important;
 }
