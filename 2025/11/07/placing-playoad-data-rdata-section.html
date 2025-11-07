@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup theme-color -->
+<!-- start theme color meta headers -->
+<meta name="theme-color" content="#151515">
+<meta name="msapplication-navbutton-color" content="#151515">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!-- end theme color meta headers -->
+
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<meta name="generator" content="Jekyll v4.3.4" />
+<meta name="author" content="icoNic" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Payload Embedding: .data vs. .rdata" />
+<meta property="og:description" content="Payload Embedding: .data vs. .rdata" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-11-07T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"icoNic"},"dateModified":"2025-11-07T00:00:00+00:00","datePublished":"2025-11-07T00:00:00+00:00","description":"Payload Embedding: .data vs. .rdata","mainEntityOfPage":{"@type":"WebPage","@id":"/2025/11/07/placing-playoad-data-rdata-section.html"},"url":"/2025/11/07/placing-playoad-data-rdata-section.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <style>
+    /* Mobile-friendly adjustment for floating Home button */
+    @media (max-width: 600px) {
+      a[style*="position: fixed"] {
+        top: 10px;
+        right: 10px;
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+    }
+    </style>
+  </head>
+
+  <body>
+    <!-- Floating Home Button -->
+    
+  <!-- Floating Home Button -->
+  <a href="/" 
+     style="
+       position: fixed;
+       top: 20px;
+       right: 20px;
+       padding: 10px 16px;
+       background-color: #111;
+       color: #33ff33;
+       border: 2px solid #33ff33;
+       border-radius: 6px;
+       font-family: 'Courier New', monospace;
+       font-weight: bold;
+       text-decoration: none;
+       cursor: pointer;
+       transition: all 0.2s ease-in-out;
+       z-index: 9999;
+     "
+     onmouseover="this.style.backgroundColor='#33ff33'; this.style.color='#111';"
+     onmouseout="this.style.backgroundColor='#111'; this.style.color='#33ff33';"
+  >
+     🏠 Home
+  </a>
+
+
+
+    <!-- Page Content -->
+    <div class="container">
+      <section id="main_content">
+        <small>7 November 2025</small>
+<h1></h1>
+
+<p class="view">by icoNic</p>
+
+<div style="margin-bottom: 20px;">
+  <button onclick="window.history.back();" 
+          style="
+            padding: 10px 16px; 
+            background-color: #111; 
+            color: #ff3333; 
+            border: 2px solid #ff3333; 
+            border-radius: 6px; 
+            font-family: 'Courier New', monospace; 
+            font-weight: bold; 
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+          "
+          onmouseover="this.style.backgroundColor='#ff3333'; this.style.color='#111';"
+          onmouseout="this.style.backgroundColor='#111'; this.style.color='#ff3333';"
+  >
+    ← Back
+  </button>
+</div>
+
+<h1 id="payload-embedding-data-vs-rdata">Payload Embedding: .data vs. .rdata</h1>
+
+<p>When designing malware, the developer must strategically decide where to embed the payload within the Portable Executable (PE) structure. This choice dictates the payload’s residing section, each with its own access permissions and behavioral profile. Common sections for this purpose include:</p>
+
+<ul>
+  <li>.data: For initialized, writable data.</li>
+  <li>.rdata: For read-only, constant data.</li>
+  <li>.text: For executable code.</li>
+  <li>.rsrc: For embedded resources.</li>
+</ul>
+
+<p>This module focuses specifically on techniques for storing payloads within the .data and .rdata sections.</p>
+
+<h2 id="data-section">.data section</h2>
+
+<p>Within a Windows executable (PE file), the .data section is a dedicated, writable area for initialized global and static variables. Its Read-Write (RW) attribute makes it perfectly suited for storing an encrypted payload that needs to be decrypted after the program starts.</p>
+
+<p>An example is shown below where a payload is stored as a variable. The debugger (xdbg) output highlights three critical points:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;Windows.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="c1">// msfvenom calc shellcode</span>
+<span class="c1">// msfvenom -p windows/x64/exec CMD=calc.exe -f c</span>
+<span class="c1">// .data saved payload</span>
+<span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">Data_RawData</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+<span class="mh">0xFC</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x83</span><span class="p">,</span> <span class="mh">0xE4</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0xE8</span><span class="p">,</span> <span class="mh">0xC0</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span>
+<span class="mh">0x51</span><span class="p">,</span>
+<span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0x51</span><span class="p">,</span> <span class="mh">0x56</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0xD2</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span>
+<span class="mh">0x52</span><span class="p">,</span>
+<span class="mh">0x60</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0x18</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span>
+<span class="mh">0x72</span><span class="p">,</span>
+<span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x0F</span><span class="p">,</span> <span class="mh">0xB7</span><span class="p">,</span> <span class="mh">0x4A</span><span class="p">,</span> <span class="mh">0x4A</span><span class="p">,</span> <span class="mh">0x4D</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0xC9</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span>
+<span class="mh">0xC0</span><span class="p">,</span>
+<span class="mh">0xAC</span><span class="p">,</span> <span class="mh">0x3C</span><span class="p">,</span> <span class="mh">0x61</span><span class="p">,</span> <span class="mh">0x7C</span><span class="p">,</span> <span class="mh">0x02</span><span class="p">,</span> <span class="mh">0x2C</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0xC1</span><span class="p">,</span> <span class="mh">0xC9</span><span class="p">,</span> <span class="mh">0x0D</span><span class="p">,</span>
+<span class="mh">0x41</span><span class="p">,</span>
+<span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xC1</span><span class="p">,</span> <span class="mh">0xE2</span><span class="p">,</span> <span class="mh">0xED</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x51</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span>
+<span class="mh">0x8B</span><span class="p">,</span>
+<span class="mh">0x42</span><span class="p">,</span> <span class="mh">0x3C</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0x88</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+<span class="mh">0x48</span><span class="p">,</span>
+<span class="mh">0x85</span><span class="p">,</span> <span class="mh">0xC0</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x18</span><span class="p">,</span>
+<span class="mh">0x44</span><span class="p">,</span>
+<span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x49</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0xE3</span><span class="p">,</span> <span class="mh">0x56</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0xC9</span><span class="p">,</span>
+<span class="mh">0x41</span><span class="p">,</span>
+<span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x34</span><span class="p">,</span> <span class="mh">0x88</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xD6</span><span class="p">,</span> <span class="mh">0x4D</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0xC9</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span>
+<span class="mh">0xC0</span><span class="p">,</span>
+<span class="mh">0xAC</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0xC1</span><span class="p">,</span> <span class="mh">0xC9</span><span class="p">,</span> <span class="mh">0x0D</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xC1</span><span class="p">,</span> <span class="mh">0x38</span><span class="p">,</span> <span class="mh">0xE0</span><span class="p">,</span> <span class="mh">0x75</span><span class="p">,</span>
+<span class="mh">0xF1</span><span class="p">,</span>
+<span class="mh">0x4C</span><span class="p">,</span> <span class="mh">0x03</span><span class="p">,</span> <span class="mh">0x4C</span><span class="p">,</span> <span class="mh">0x24</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x45</span><span class="p">,</span> <span class="mh">0x39</span><span class="p">,</span> <span class="mh">0xD1</span><span class="p">,</span> <span class="mh">0x75</span><span class="p">,</span> <span class="mh">0xD8</span><span class="p">,</span> <span class="mh">0x58</span><span class="p">,</span>
+<span class="mh">0x44</span><span class="p">,</span>
+<span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">,</span> <span class="mh">0x24</span><span class="p">,</span> <span class="mh">0x49</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x0C</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span>
+<span class="mh">0x44</span><span class="p">,</span>
+<span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">,</span> <span class="mh">0x1C</span><span class="p">,</span> <span class="mh">0x49</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">,</span> <span class="mh">0x88</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span>
+<span class="mh">0x01</span><span class="p">,</span>
+<span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x58</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x58</span><span class="p">,</span> <span class="mh">0x5E</span><span class="p">,</span> <span class="mh">0x59</span><span class="p">,</span> <span class="mh">0x5A</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x58</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span>
+<span class="mh">0x59</span><span class="p">,</span>
+<span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x5A</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x83</span><span class="p">,</span> <span class="mh">0xEC</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0xE0</span><span class="p">,</span> <span class="mh">0x58</span><span class="p">,</span>
+<span class="mh">0x41</span><span class="p">,</span>
+<span class="mh">0x59</span><span class="p">,</span> <span class="mh">0x5A</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x12</span><span class="p">,</span> <span class="mh">0xE9</span><span class="p">,</span> <span class="mh">0x57</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0x5D</span><span class="p">,</span>
+<span class="mh">0x48</span><span class="p">,</span>
+<span class="mh">0xBA</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8D</span><span class="p">,</span>
+<span class="mh">0x8D</span><span class="p">,</span>
+<span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0xBA</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x6F</span><span class="p">,</span> <span class="mh">0x87</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span>
+<span class="mh">0xD5</span><span class="p">,</span>
+<span class="mh">0xBB</span><span class="p">,</span> <span class="mh">0xE0</span><span class="p">,</span> <span class="mh">0x1D</span><span class="p">,</span> <span class="mh">0x2A</span><span class="p">,</span> <span class="mh">0x0A</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0xBA</span><span class="p">,</span> <span class="mh">0xA6</span><span class="p">,</span> <span class="mh">0x95</span><span class="p">,</span> <span class="mh">0xBD</span><span class="p">,</span> <span class="mh">0x9D</span><span class="p">,</span>
+<span class="mh">0xFF</span><span class="p">,</span>
+<span class="mh">0xD5</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x83</span><span class="p">,</span> <span class="mh">0xC4</span><span class="p">,</span> <span class="mh">0x28</span><span class="p">,</span> <span class="mh">0x3C</span><span class="p">,</span> <span class="mh">0x06</span><span class="p">,</span> <span class="mh">0x7C</span><span class="p">,</span> <span class="mh">0x0A</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xFB</span><span class="p">,</span>
+<span class="mh">0xE0</span><span class="p">,</span>
+<span class="mh">0x75</span><span class="p">,</span> <span class="mh">0x05</span><span class="p">,</span> <span class="mh">0xBB</span><span class="p">,</span> <span class="mh">0x47</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x6F</span><span class="p">,</span> <span class="mh">0x6A</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x59</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span>
+<span class="mh">0x89</span><span class="p">,</span>
+<span class="mh">0xDA</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0xD5</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x61</span><span class="p">,</span> <span class="mh">0x6C</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x00</span>
+<span class="p">};</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"[i] Data_RawData var : 0x%p </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">Data_RawData</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"[#] Press &lt;Enter&gt; To Quit ..."</span><span class="p">);</span>
+    <span class="n">getchar</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> 
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Key points noted in debugger output:</p>
+
+<ul>
+  <li>Base Address: The .data section itself is located at 0x00007FF675543000.</li>
+  <li>Payload Location: The specific payload, Data_RawData, is found at 0x00007FF675543080, placing it 0x80 offset into the .data section.</li>
+  <li>Memory Permissions: The region’s “RW” protection confirms it is both readable and writable, which is essential for the runtime decryption process.</li>
+</ul>
+
+<p><img src="/assets/images/data-section.png" alt="PE-Structure" /></p>
+
+<p><img src="/assets/images/datasection-xdbg.png" alt="PE-Structure" /></p>
+
+<h2 id="rdata-section">.rdata Section</h2>
+
+<p>Variables declared with the const qualifier are treated as constants and placed in a “read-only” data segment. The “r” in .rdata signifies this read-only property; any attempt to modify these variables during execution will trigger an access violation. It is important to note that compiler settings can lead to the merging of the .data and .rdata sections, or even their consolidation into the .text section.</p>
+
+<p>The following code snippet demonstrates storing a payload within the .rdata section. The code is functionally identical to the previous example, with the key difference being the addition of the const qualifier before the variable declaration.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;Windows.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="c1">// msfvenom calc shellcode</span>
+<span class="c1">// msfvenom -p windows/x64/exec CMD=calc.exe -f c</span>
+<span class="c1">// .data saved payload</span>
+<span class="k">const</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">Data_RawData</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+<span class="mh">0xFC</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x83</span><span class="p">,</span> <span class="mh">0xE4</span><span class="p">,</span> <span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0xE8</span><span class="p">,</span> <span class="mh">0xC0</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span>
+<span class="mh">0x51</span><span class="p">,</span>
+<span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0x51</span><span class="p">,</span> <span class="mh">0x56</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0xD2</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span>
+<span class="mh">0x52</span><span class="p">,</span>
+<span class="mh">0x60</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0x18</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span>
+<span class="mh">0x72</span><span class="p">,</span>
+<span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x0F</span><span class="p">,</span> <span class="mh">0xB7</span><span class="p">,</span> <span class="mh">0x4A</span><span class="p">,</span> <span class="mh">0x4A</span><span class="p">,</span> <span class="mh">0x4D</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0xC9</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span>
+<span class="mh">0xC0</span><span class="p">,</span>
+<span class="mh">0xAC</span><span class="p">,</span> <span class="mh">0x3C</span><span class="p">,</span> <span class="mh">0x61</span><span class="p">,</span> <span class="mh">0x7C</span><span class="p">,</span> <span class="mh">0x02</span><span class="p">,</span> <span class="mh">0x2C</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0xC1</span><span class="p">,</span> <span class="mh">0xC9</span><span class="p">,</span> <span class="mh">0x0D</span><span class="p">,</span>
+<span class="mh">0x41</span><span class="p">,</span>
+<span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xC1</span><span class="p">,</span> <span class="mh">0xE2</span><span class="p">,</span> <span class="mh">0xED</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x51</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span>
+<span class="mh">0x8B</span><span class="p">,</span>
+<span class="mh">0x42</span><span class="p">,</span> <span class="mh">0x3C</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0x88</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span>
+<span class="mh">0x48</span><span class="p">,</span>
+<span class="mh">0x85</span><span class="p">,</span> <span class="mh">0xC0</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x18</span><span class="p">,</span>
+<span class="mh">0x44</span><span class="p">,</span>
+<span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x49</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0xE3</span><span class="p">,</span> <span class="mh">0x56</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0xC9</span><span class="p">,</span>
+<span class="mh">0x41</span><span class="p">,</span>
+<span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x34</span><span class="p">,</span> <span class="mh">0x88</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xD6</span><span class="p">,</span> <span class="mh">0x4D</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0xC9</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span>
+<span class="mh">0xC0</span><span class="p">,</span>
+<span class="mh">0xAC</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0xC1</span><span class="p">,</span> <span class="mh">0xC9</span><span class="p">,</span> <span class="mh">0x0D</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xC1</span><span class="p">,</span> <span class="mh">0x38</span><span class="p">,</span> <span class="mh">0xE0</span><span class="p">,</span> <span class="mh">0x75</span><span class="p">,</span>
+<span class="mh">0xF1</span><span class="p">,</span>
+<span class="mh">0x4C</span><span class="p">,</span> <span class="mh">0x03</span><span class="p">,</span> <span class="mh">0x4C</span><span class="p">,</span> <span class="mh">0x24</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x45</span><span class="p">,</span> <span class="mh">0x39</span><span class="p">,</span> <span class="mh">0xD1</span><span class="p">,</span> <span class="mh">0x75</span><span class="p">,</span> <span class="mh">0xD8</span><span class="p">,</span> <span class="mh">0x58</span><span class="p">,</span>
+<span class="mh">0x44</span><span class="p">,</span>
+<span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">,</span> <span class="mh">0x24</span><span class="p">,</span> <span class="mh">0x49</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x0C</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span>
+<span class="mh">0x44</span><span class="p">,</span>
+<span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">,</span> <span class="mh">0x1C</span><span class="p">,</span> <span class="mh">0x49</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">,</span> <span class="mh">0x88</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span>
+<span class="mh">0x01</span><span class="p">,</span>
+<span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x58</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x58</span><span class="p">,</span> <span class="mh">0x5E</span><span class="p">,</span> <span class="mh">0x59</span><span class="p">,</span> <span class="mh">0x5A</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x58</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span>
+<span class="mh">0x59</span><span class="p">,</span>
+<span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x5A</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x83</span><span class="p">,</span> <span class="mh">0xEC</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0x52</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0xE0</span><span class="p">,</span> <span class="mh">0x58</span><span class="p">,</span>
+<span class="mh">0x41</span><span class="p">,</span>
+<span class="mh">0x59</span><span class="p">,</span> <span class="mh">0x5A</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x12</span><span class="p">,</span> <span class="mh">0xE9</span><span class="p">,</span> <span class="mh">0x57</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0x5D</span><span class="p">,</span>
+<span class="mh">0x48</span><span class="p">,</span>
+<span class="mh">0xBA</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x8D</span><span class="p">,</span>
+<span class="mh">0x8D</span><span class="p">,</span>
+<span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0xBA</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0x8B</span><span class="p">,</span> <span class="mh">0x6F</span><span class="p">,</span> <span class="mh">0x87</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span>
+<span class="mh">0xD5</span><span class="p">,</span>
+<span class="mh">0xBB</span><span class="p">,</span> <span class="mh">0xE0</span><span class="p">,</span> <span class="mh">0x1D</span><span class="p">,</span> <span class="mh">0x2A</span><span class="p">,</span> <span class="mh">0x0A</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span> <span class="mh">0xBA</span><span class="p">,</span> <span class="mh">0xA6</span><span class="p">,</span> <span class="mh">0x95</span><span class="p">,</span> <span class="mh">0xBD</span><span class="p">,</span> <span class="mh">0x9D</span><span class="p">,</span>
+<span class="mh">0xFF</span><span class="p">,</span>
+<span class="mh">0xD5</span><span class="p">,</span> <span class="mh">0x48</span><span class="p">,</span> <span class="mh">0x83</span><span class="p">,</span> <span class="mh">0xC4</span><span class="p">,</span> <span class="mh">0x28</span><span class="p">,</span> <span class="mh">0x3C</span><span class="p">,</span> <span class="mh">0x06</span><span class="p">,</span> <span class="mh">0x7C</span><span class="p">,</span> <span class="mh">0x0A</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0xFB</span><span class="p">,</span>
+<span class="mh">0xE0</span><span class="p">,</span>
+<span class="mh">0x75</span><span class="p">,</span> <span class="mh">0x05</span><span class="p">,</span> <span class="mh">0xBB</span><span class="p">,</span> <span class="mh">0x47</span><span class="p">,</span> <span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x6F</span><span class="p">,</span> <span class="mh">0x6A</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x59</span><span class="p">,</span> <span class="mh">0x41</span><span class="p">,</span>
+<span class="mh">0x89</span><span class="p">,</span>
+<span class="mh">0xDA</span><span class="p">,</span> <span class="mh">0xFF</span><span class="p">,</span> <span class="mh">0xD5</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x61</span><span class="p">,</span> <span class="mh">0x6C</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x00</span>
+<span class="p">};</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"[i] RData_RawData var : 0x%p </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">Data_RawData</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"[#] Press &lt;Enter&gt; To Quit ..."</span><span class="p">);</span>
+    <span class="n">getchar</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> 
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Notes from the analysis:</p>
+
+<ul>
+  <li>The .rdata section begins at address 0x00007FF63BEC2000.</li>
+  <li>The payload variable EncryptedPayload is located at 0x00007FF63BEC22A0, which is an offset of 0x2A0 from the start of the .rdata section.</li>
+  <li>The memory region’s protection is marked as “R” (Read-Only), confirming its immutable nature and preventing direct modification at runtime.</li>
+</ul>
+
+<p><img src="/assets/images/rdatasection.png" alt="PE-Structure" /></p>
+
+<p><img src="/assets/images/rdatasection-xdbg.png" alt="PE-Structure" /></p>
+
+<h2 id="verifying-payload-placement-using-dumpbin">Verifying Payload Placement Using Dumpbin</h2>
+
+<p>The image below displays the output from analyzing the PE file with dumpbin.exe. This utility is included with Visual Studio’s C++ development tools.</p>
+
+<p>Command: dumpbin.exe /ALL <binary-file.exe></binary-file.exe></p>
+
+<p><img src="/assets/images/dumpbinexe.png" alt="PE-Structure" /></p>
+
+<p>By examining the output, specifically the details of the .rdata section, you can view the stored data in its raw binary format.</p>
+
+<p><img src="/assets/images/dumpbinexe2.png" alt="PE-Structure" /></p>
+
+
+
+  <small>tags: <em>windows</em> - <em>pe-format</em> - <em>executable</em> - <em>reverse-engineering</em> - <em>programming</em></small>
+
+
+      </section>
+    </div>
+
+    <!-- Global Footer (ALWAYS shows on every page) -->
+    <footer style="text-align: center; padding: 1rem; background: #161b22; font-size: 0.9rem; color: #8b949e; border-top: 2px solid #30363d; margin-top: 2rem;">
+      ⚡ “Learning never exhausts the mind.” — Leonardo da Vinci <br>
+      © 2025 Iconic Hacks. All rights reserved.
+    </footer>
+  </body>
+</html>
