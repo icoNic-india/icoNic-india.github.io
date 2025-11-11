@@ -1,263 +1,157 @@
 <!DOCTYPE html>
 <html lang="en-US">
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/assets/css/style.css?v=">
-    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
-
-<!-- Setup theme-color -->
-<!-- start theme color meta headers -->
-<meta name="theme-color" content="#151515">
-<meta name="msapplication-navbutton-color" content="#151515">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<!-- end theme color meta headers -->
-
-
-<!-- Setup Google Analytics -->
-
-
-
-<!-- You can set your favicon here -->
-<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
-
-<!-- end custom head snippets -->
-
-    <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Home</title>
-<meta name="generator" content="Jekyll v4.3.4" />
-<meta property="og:title" content="Home" />
-<meta name="author" content="icoNic" />
-<meta property="og:locale" content="en_US" />
-<link rel="canonical" href="http://localhost:4000/" />
-<meta property="og:url" content="http://localhost:4000/" />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Home" />
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"icoNic"},"headline":"Home","url":"http://localhost:4000/"}</script>
-<!-- End Jekyll SEO tag -->
-
-
-    <style>
-    /* Mobile-friendly adjustment for floating Home button */
-    @media (max-width: 600px) {
-      a[style*="position: fixed"] {
-        top: 10px;
-        right: 10px;
-        padding: 8px 12px;
-        font-size: 14px;
-      }
-    }
-    </style>
-  </head>
-
-  <body>
-    <!-- Floating Home Button -->
-    
-
-
-    <!-- Page Content -->
-    <div class="container">
-      <section id="main_content">
-        <!DOCTYPE html>
-<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hack Stuffs</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Home</title>
+  <meta name="author" content="icoNic" />
+  <meta name="theme-color" content="#151515" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #0d1117;
-      color: #e6edf3;
-      margin: 0;
-      padding: 0;
-      line-height: 1.6;
+    :root{
+      --bg:#0d1117;
+      --card:#161b22;
+      --muted:#8b949e;
+      --border:#30363d;
+      --accent:#58a6ff;
+      --accent2:#caff70;
+      --accent3:#ff79c6;
+      --accent4:#50fa7b;
+      --card-radius:12px;
+      --card-width:360px;
     }
-    header {
-      background: #161b22;
-      padding: 2rem;
-      text-align: center;
-      border-bottom: 2px solid #30363d;
+    html,body{height:100%;margin:0;background:var(--bg);color:#e6edf3;font-family:Inter,Arial,sans-serif;line-height:1.4}
+    header{background:var(--card);padding:1.6rem;border-bottom:2px solid var(--border);text-align:center}
+    header h1{margin:0;color:var(--accent);font-size:1.8rem}
+    header p{margin:.4rem 0 0;color:var(--muted)}
+    header .btn{display:inline-block;margin-top:.8rem;padding:.5rem .9rem;background:var(--accent);color:var(--bg);text-decoration:none;border-radius:8px;font-weight:600}
+    main{max-width:1200px;margin:1.6rem auto;padding:0 1rem}
+    /* Grid: 3 posts per row, no horizontal sliding */
+    .posts-row{
+      display:grid;
+      grid-template-columns: repeat(3, var(--card-width));
+      justify-content:center;
+      gap:1.25rem;
+      align-items:flex-start;
+      padding:1rem 0 2rem;
     }
-    header h1 {
-      margin: 0;
-      font-size: 2.5rem;
-      color: #58a6ff;
+    .post-card{
+      background:var(--card);
+      border-radius:var(--card-radius);
+      box-shadow:0 6px 18px #0006;
+      padding:1.25rem;
+      border:1px solid rgba(255,255,255,0.02);
+      width:100%;
+      box-sizing:border-box;
     }
-    header p {
-      margin-top: 0.5rem;
-      font-size: 1.2rem;
-      color: #8b949e;
+    .post-card h3{margin:0 0 .5rem;font-size:1.05rem}
+    .post-card .meta{color:var(--muted);font-size:.9rem;margin-bottom:.75rem}
+    .post-card p{color:var(--muted);font-size:.96rem;margin:0 0 .9rem}
+    .post-card .read{
+      display:inline-block;padding:.55rem .9rem;border-radius:8px;text-decoration:none;font-weight:700;color:var(--bg);
+      background:var(--accent);transition:transform .12s ease;
     }
-    main {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 1rem;
+    .post-card .read:hover{transform:translateY(-3px)}
+    /* per-post color accents */
+    .post-pe h3, .post-pe .tag{color:var(--accent2)}
+    .post-payload h3, .post-payload .tag{color:var(--accent3)}
+    .post-text h3, .post-text .tag{color:var(--accent4)}
+    /* Responsive: adapt columns */
+    @media (max-width:1100px){
+      .posts-row{grid-template-columns:repeat(2, minmax(260px, 1fr)); gap:.9rem}
     }
-    section {
-      margin-bottom: 2rem;
+    @media (max-width:720px){
+      .posts-row{grid-template-columns:repeat(1, 1fr); padding:1rem}
     }
-    h2 {
-      color: #58a6ff;
-      border-bottom: 2px solid #30363d;
-      padding-bottom: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    .btn {
-      display: inline-block;
-      background-color: #58a6ff;
-      color: #0d1117;
-      padding: 0.6rem 1.2rem;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background 0.2s;
-    }
-    .btn:hover {
-      background-color: #1f6feb;
-      color: #ffffff;
-    }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: #161b22;
-      font-size: 0.9rem;
-      color: #8b949e;
-      border-top: 2px solid #30363d;
-    }
+    /* Footer */
+    footer{max-width:1200px;margin:0 auto 2rem;padding:1rem;text-align:center;color:var(--muted);border-top:2px solid var(--border)}
   </style>
 </head>
 <body>
-
   <header>
     <h1>📝 My Cybersecurity Blog</h1>
     <p>Sharing knowledge, experiments, and learning along the journey.</p>
     <a href="whoami.html" class="btn">Whoami</a>
   </header>
-  <div style="margin-top: 2rem;">
-  <section style="max-width: 700px; margin: 0 auto; background: #161b22; border-radius: 12px; box-shadow: 0 2px 12px #0003; padding: 2rem 1.5rem;">
-    <h2 style="color: #caff70; margin-top: 0; font-size: 1.6rem;">
-      📖 Malware Series #1: From Notepad to the Kernel
-    </h2>
-    <p style="color: #8b949e; font-size: 1.1rem;">
-      Dive deep into Windows internals and learn how user mode transitions to kernel mode, with real-world malware analysis and Procmon traces.<br>
-      <span style="color: #58a6ff;">Tags:</span> windows, malware, kernel, reverse-engineering
-    </p>
-    <a href="/2025/08/30/malware-series-1-user-vs-kernel.html"
-      style="display: inline-block; margin-top: 1rem; padding: 10px 18px; background-color: #58a6ff; color: #0d1117; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem;">
-      Read the full article →
-    </a>
-      </section>
-</div>
-
-
-   <div style="margin-top: 2rem;">
-  <section style="max-width: 700px; margin: 0 auto; background: #161b22; border-radius: 12px; box-shadow: 0 2px 12px #0003; padding: 2rem 1.5rem;">
-    <h2 style="color: #caff70; margin-top: 0; font-size: 1.6rem;">
-      🧠 Malware Series #2: Windows Memory for Malware Development 
-    </h2>
-    <p style="color: #8b949e; font-size: 1.1rem;">
-      Learn how Windows handles virtual memory, page states, and heap allocation — all from a malware developer’s perspective. Includes real code examples, memory viewer screenshots, and reverse engineering insights.<br>
-      <span style="color: #58a6ff;">Tags:</span> windows, malware, memory, heapalloc, reverse-engineering, cybersecurity
-    </p>
-    <a href="/2025/09/14/malware-series-2-windows-memory-management.html"
-      style="display: inline-block; margin-top: 1rem; padding: 10px 18px; background-color: #58a6ff; color: #0d1117; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem;">
-      Read the full article →
-    </a>
-  </section>
-</div>
-
- <div style="margin-top: 2rem;">
-  <section style="max-width: 700px; margin: 0 auto; background: #161b22; border-radius: 12px; box-shadow: 0 2px 12px #0003; padding: 2rem 1.5rem;">
-    <h2 style="color: #caff70; margin-top: 0; font-size: 1.6rem;">
-      🧠 Malware Series #3: Introduction to the Windows API (Beginner-Friendly Guide)
-    </h2>
-    <p style="color: #8b949e; font-size: 1.1rem;">
-      Get acquainted with the Windows API, its structure, and how it can be leveraged in malware development. This guide includes practical examples and tips for beginners.<br>
-      <span style="color: #58a6ff;">Tags:</span> windows, malware, api, reverse-engineering, cybersecurity
-    </p>
-    <a href="/2025/09/24/malware-series-3-introduction-to-windows-api.html"
-      style="display: inline-block; margin-top: 1rem; padding: 10px 18px; background-color: #58a6ff; color: #0d1117; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem;">
-      Read the full article →
-    </a>
-  </section>
-</div>
-
-<div style="margin-top: 2rem;">
-  <section style="max-width: 700px; margin: 0 auto; background: #161b22; border-radius: 12px; box-shadow: 0 2px 12px #0003; padding: 2rem 1.5rem;">
-    <h2 id="pe-title" style="color: #caff70; margin-top: 0; font-size: 1.6rem;">
-      🗂 Malware Series #4: Portable Executable Deep Dive
-    </h2>
-    <p style="color: #8b949e; font-size: 1.1rem;">
-      A practical walkthrough of the PE file format: headers, sections, import tables, and tips for static analysis. This post breaks down how executables are structured and how to inspect them safely.
-    </p>
-    <p style="color: #8b949e; font-size: 0.95rem; margin: 0.5rem 0 0;">
-      <time datetime="2025-10-14" style="color: #8b949e;">Oct 14, 2025</time>
-      &nbsp;·&nbsp;
-      <span style="color: #58a6ff;">Tags:</span> portable-executable, pe, windows, reverse-engineering
-    </p>
-    <a href="/2025/10/14/portable-executable-format.html"
-       style="display: inline-block; margin-top: 1rem; padding: 10px 18px; background-color: #58a6ff; color: #0d1117; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem;"
-       aria-labelledby="pe-title" rel="noopener">
-      Read the full article →
-    </a>
-  </section>
-</div>
-
-
-<div style="margin-top: 2rem;">
-  <section style="max-width: 700px; margin: 0 auto; background: #161b22; border-radius: 12px; box-shadow: 0 2px 12px #0003; padding: 2rem 1.5rem;">
-    <h2 id="payload-title" style="color: #ff79c6; margin-top: 0; font-size: 1.6rem;">
-      🔒 Malware Series #5: Payload Placement in PE Sections
-    </h2>
-    <p style="color: #8b949e; font-size: 1.1rem;">
-      Exploring how malware embeds payloads in .data and .rdata sections: understanding memory permissions, 
-      compiler behavior, and practical analysis techniques using tools like dumpbin and x64dbg.
-    </p>
-    <p style="color: #8b949e; font-size: 0.95rem; margin: 0.5rem 0 0;">
-      <time datetime="2025-10-15" style="color: #8b949e;">Oct 15, 2025</time>
-      &nbsp;·&nbsp;
-      <span style="color: #ff79c6;">Tags:</span> pe-sections, payload-placement, malware-development, static-analysis
-    </p>
-    <a href="/2025/11/07/placing-playoad-data-rdata-section.html"
-       style="display: inline-block; margin-top: 1rem; padding: 10px 18px; background-color: #ff79c6; color: #0d1117; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem;"
-       aria-labelledby="payload-title" rel="noopener">
-      Read the full article →
-    </a>
-  </section>
-</div>
 
   <main>
-    <section>
-      <h2>📖 Articles</h2>
-      <p>Coming soon... I’ll be posting write-ups, research notes, and thoughts here.</p>
-      <!-- Example later:
-      <ul>
-        <li><a href="articles/article1.html">Introduction to Exploit Development</a></li>
-        <li><a href="articles/article2.html">Red Team Simulation Notes</a></li>
-      </ul>
-      -->
+    <section aria-label="Featured posts">
+      <div class="posts-row">
+        <article class="post-card post-1" aria-labelledby="post1-title">
+          <h3 id="post1-title">📖 Malware Series #1: From Notepad to the Kernel</h3>
+          <p class="meta"><time datetime="2025-08-30">Aug 30, 2025</time> · <span class="tag">windows, malware, kernel</span></p>
+          <p>Dive deep into Windows internals and learn how user mode transitions to kernel mode, with real-world malware analysis and Procmon traces.</p>
+          <a class="read" href="/2025/08/30/malware-series-1-user-vs-kernel.html">Read the full article →</a>
+        </article>
+
+        <article class="post-card post-2" aria-labelledby="post2-title">
+          <h3 id="post2-title">🧠 Malware Series #2: Windows Memory for Malware Development</h3>
+          <p class="meta"><time datetime="2025-09-14">Sep 14, 2025</time> · <span class="tag">windows, memory, heapalloc</span></p>
+          <p>Learn how Windows handles virtual memory, page states, and heap allocation — with practical examples and reverse engineering insights.</p>
+          <a class="read" href="/2025/09/14/malware-series-2-windows-memory-management.html">Read the full article →</a>
+        </article>
+
+        <article class="post-card post-3" aria-labelledby="post3-title">
+          <h3 id="post3-title">🧠 Malware Series #3: Introduction to the Windows API</h3>
+          <p class="meta"><time datetime="2025-09-24">Sep 24, 2025</time> · <span class="tag">api, reverse-engineering</span></p>
+          <p>Get acquainted with the Windows API, its structure, and how it can be leveraged in malware development. Practical examples included.</p>
+          <a class="read" href="/2025/09/24/malware-series-3-introduction-to-windows-api.html">Read the full article →</a>
+        </article>
+
+        <article class="post-card post-pe" aria-labelledby="post4-title">
+          <h3 id="post4-title">🗂 Malware Series #4: Portable Executable Deep Dive</h3>
+          <p class="meta"><time datetime="2025-10-14">Oct 14, 2025</time> · <span class="tag">portable-executable, pe</span></p>
+          <p>A practical walkthrough of the PE file format: headers, sections, import tables, and tips for static analysis.</p>
+          <a class="read" href="/2025/10/14/portable-executable-format.html">Read the full article →</a>
+        </article>
+
+        <article class="post-card post-payload" aria-labelledby="post5-title">
+          <h3 id="post5-title">🔒 Malware Series #5: Payload Placement in PE Sections</h3>
+          <p class="meta"><time datetime="2025-11-07">Nov 07, 2025</time> · <span class="tag">pe-sections, payload-placement</span></p>
+          <p>Exploring how malware embeds payloads in .data and .rdata sections: memory permissions, compiler behavior, and analysis techniques.</p>
+          <a class="read" href="/2025/11/07/placing-playoad-data-rdata-section.html">Read the full article →</a>
+        </article>
+
+        <article class="post-card post-text" aria-labelledby="post6-title">
+          <h3 id="post6-title">⚡ Malware Series #6: Stealth Payloads in the .text Section</h3>
+          <p class="meta"><time datetime="2025-11-11">Nov 11, 2025</time> · <span class="tag">text-section, shellcode</span></p>
+          <p>Advanced technique: embedding and executing payloads directly within the .text section and managing memory permissions safely.</p>
+          <a class="read" href="/2025/11/11/placing-payload-text-section.html">Read the full article →</a>
+        </article>
+
+        <!-- Add up to 3 more articles here to show 9 posts on the page
+        <article class="post-card" aria-labelledby="post7-title">
+          <h3 id="post7-title">Coming Soon #7</h3>
+          <p class="meta"><time datetime="2025-11-20">Nov 20, 2025</time> · <span class="tag">research</span></p>
+          <p>Placeholder for upcoming write-up.</p>
+          <a class="read" href="#">Read →</a>
+        </article>
+
+        <article class="post-card" aria-labelledby="post8-title">
+          <h3 id="post8-title">Coming Soon #8</h3>
+          <p class="meta"><time datetime="2025-11-21">Nov 21, 2025</time> · <span class="tag">research</span></p>
+          <p>Placeholder for upcoming write-up.</p>
+          <a class="read" href="#">Read →</a>
+        </article>
+
+        <article class="post-card" aria-labelledby="post9-title">
+          <h3 id="post9-title">Coming Soon #9</h3>
+          <p class="meta"><time datetime="2025-11-22">Nov 22, 2025</time> · <span class="tag">research</span></p>
+          <p>Placeholder for upcoming write-up.</p>
+          <a class="read" href="#">Read →</a>
+        </article> -->
+      </div>
+    </section>
+
+    <section aria-label="Articles summary" style="max-width:900px;margin:0 auto;padding:1rem 0;">
+      <h2 style="color:var(--accent);margin:0 0 .6rem">📖 Articles</h2>
+      <p style="color:var(--muted)">Coming soon... write-ups, research notes, and thoughts will be posted here.</p>
     </section>
   </main>
 
-  <!-- <footer>
-    ⚡ “Learning never exhausts the mind.” — Leonardo da Vinci <br>
+  <footer>
+    ⚡ “Learning never exhausts the mind.” — Leonardo da Vinci <br />
     © 2025 Iconic Hacks. All rights reserved.
-  </footer> -->
-
+  </footer>
 </body>
-</html>
-
-      </section>
-    </div>
-
-    <!-- Global Footer (ALWAYS shows on every page) -->
-    <footer style="text-align: center; padding: 1rem; background: #161b22; font-size: 0.9rem; color: #8b949e; border-top: 2px solid #30363d; margin-top: 2rem;">
-      ⚡ “Learning never exhausts the mind.” — Leonardo da Vinci <br>
-      © 2025 Iconic Hacks. All rights reserved.
-    </footer>
-  </body>
 </html>
